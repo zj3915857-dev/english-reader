@@ -712,13 +712,16 @@ textarea { resize: vertical; min-height: 100px; }
         <label>📝 中文翻译</label>
         <textarea id="editTranslation" rows="4"></textarea>
 
+        <label>🔍 语法分析</label>
+        <textarea id="editGrammar" rows="16" style="min-height:300px;resize:vertical"></textarea>
+
         <label>📚 词汇分解</label>
-        <div class="collapsible-header open" onclick="toggleCollapsible(this)" style="margin-bottom:0">
+        <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-bottom:0">
           <span class="arrow">▶</span>
-          <span>点击收起词汇详情</span>
+          <span>点击展开词汇详情</span>
           <span class="vocab-preview"></span>
         </div>
-        <div class="collapsible-body open" style="margin-bottom:12px">
+        <div class="collapsible-body" style="margin-bottom:12px">
           <table class="vocab-table" id="vocabTable">
             <thead>
               <tr><th>单词/短语</th><th>发音</th><th>音标</th><th>释义</th><th>词性</th><th></th></tr>
@@ -728,11 +731,9 @@ textarea { resize: vertical; min-height: 100px; }
           <button class="btn btn-outline btn-sm" onclick="addVocabRow()" style="margin:8px">+ 添加词汇</button>
         </div>
 
-        <label>🔍 语法分析</label>
-        <textarea id="editGrammar" rows="8"></textarea>
-
         <div class="btn-group">
           <button class="btn btn-success" onclick="saveCard()">✅ 确认保存</button>
+          <button class="btn btn-outline" onclick="clearForm()">🗑️ 清空</button>
           <button class="btn btn-outline" onclick="doAIAnalysis()">🔄 重新分析</button>
         </div>
       </div>
@@ -1312,7 +1313,12 @@ function saveCard() {
   cards.unshift(card);
   saveCards(cards);
 
-  // Reset form
+
+  updateReviewBadge();
+  showToast('✅ 错题已保存！');
+}
+
+function clearForm() {
   document.getElementById('addOriginal').value = '';
   document.getElementById('editTranslation').value = '';
   document.getElementById('editGrammar').value = '';
@@ -1320,9 +1326,6 @@ function saveCard() {
   document.getElementById('analysisResult').style.display = 'none';
   addTags.length = 0;
   renderTags();
-
-  updateReviewBadge();
-  showToast('✅ 错题已保存！');
 }
 
 // ==================== REVIEW ====================
