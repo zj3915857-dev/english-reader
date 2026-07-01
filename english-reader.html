@@ -1138,6 +1138,13 @@ async function doAIAnalysis() {
     return;
   }
 
+  // Check if input contains enough English characters
+  const latinChars = originalText.match(/[a-zA-Z]/g);
+  if (!latinChars || latinChars.length < 5) {
+    showToast('⚠️ 请粘贴英文段落进行学习（检测到英文内容过少）');
+    return;
+  }
+
   const settings = getSettings();
   if (!settings.apiKey) {
     showToast('⚠️ 请先在「设置」页配置 API Key');
@@ -1230,9 +1237,15 @@ async function doAIAnalysis() {
     resultDiv.querySelector('.card-title').innerHTML = '📊 AI 分析结果 <span style="font-weight:400;font-size:0.8rem;color:var(--text-secondary)">（点击各项可编辑）</span>';
     showToast('✅ AI 分析完成，请核对后保存');
   } catch (e) {
-    showToast('❌ 分析失败: ' + e.message);
-    document.getElementById('editTranslation').value = '分析失败，请重试';
-    document.getElementById('editGrammar').value = e.message;
+    if (e instanceof SyntaxError && e.message.includes('JSON')) {
+      showToast('❌ AI 返回格式异常，可能是输入非英文内容导致，请重试');
+      document.getElementById('editTranslation').value = '分析失败：AI 未按要求返回 JSON 格式。请确认输入的是英文段落。';
+      document.getElementById('editGrammar').value = '';
+    } else {
+      showToast('❌ 分析失败: ' + e.message);
+      document.getElementById('editTranslation').value = '分析失败，请重试';
+      document.getElementById('editGrammar').value = e.message;
+    }
   } finally {
     btn.disabled = false;
     btn.textContent = '🤖 AI 分析';
