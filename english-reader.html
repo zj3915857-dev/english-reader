@@ -319,7 +319,7 @@ textarea { resize: vertical; min-height: 100px; }
   margin-top: 20px;
   display: none;
 }
-.review-detail.show { display: block; }
+.review-detail.show { display: block; max-height: 60vh; overflow-y: auto; }
 .review-detail h4 {
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -726,7 +726,7 @@ textarea { resize: vertical; min-height: 100px; }
         </div>
 
         <label>🔍 语法分析</label>
-        <textarea id="editGrammar" rows="4"></textarea>
+        <textarea id="editGrammar" rows="8"></textarea>
 
         <div class="btn-group">
           <button class="btn btn-success" onclick="saveCard()">✅ 确认保存</button>
@@ -1603,7 +1603,7 @@ function showEditModal(cardId) {
     <button class="btn btn-outline btn-sm" onclick="addModalVocabRow()" style="margin-top:8px">+ 添加词汇</button>
 
     <label>🔍 语法分析</label>
-    <textarea id="modalGrammar" rows="3">${escapeHtml(card.grammarNotes || '')}</textarea>
+    <textarea id="modalGrammar" rows="6">${escapeHtml(card.grammarNotes || '')}</textarea>
 
     <label>标签</label>
     <div class="tags-input" id="modalTagsInput">
