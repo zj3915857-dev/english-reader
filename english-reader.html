@@ -1180,27 +1180,8 @@ async function doAIAnalysis() {
         messages: [
           {
             role: 'system',
-            content: `你是一位英语教学专家。请对用户提供的英文段落进行详细分析，并以严格的JSON格式返回结果。
-
-要求：
-1. translation: 整段自然流畅的中文翻译
-2. vocabulary: 提取文中的关键/难点词汇和短语，每个包含 word（原文）、phonetic（音标）、meaning（中文释义）、pos（词性，如 n./v./adj./adv./prep./conj./phr. 等）
-3. grammarNotes: 对每句话**逐句分析**，每个句子用如下格式（句与句之间空一行）：
-
-【原句】原文中的这个英文句子
-【结构分析】从句类型、时态、主干结构、特殊句式等中文说明
-【译文】这句话单独的中文翻译
-
-注意：每句话都要单独分析并附上对应的译文，不要把所有句子混在一起。
-
-返回格式必须严格遵循以下 JSON Schema，不要返回其他内容，不要包含 markdown 代码块标记：
-{
-  "translation": "...",
-  "vocabulary": [
-    {"word": "...", "phonetic": "...", "meaning": "...", "pos": "..."}
-  ],
-  "grammarNotes": "..."
-}`,
+            content: `你是一位英语教学专家。请用严格JSON分析用户输入的英文段落，不要用markdown包裹：
+{"translation":"整段中文翻译","vocabulary":[{"word":"原文单词","phonetic":"音标","meaning":"中文释义","pos":"n./v./adj./adv./prep./conj./phr."}],"grammarNotes":"逐句分析：\n【原句】英文原句\n【结构分析】从句类型、时态、主干结构\n【译文】中文翻译\n\n句与句之间空行"}`,
           },
           { role: 'user', content: originalText },
         ],
