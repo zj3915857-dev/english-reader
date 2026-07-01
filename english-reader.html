@@ -185,6 +185,9 @@ textarea { resize: vertical; min-height: 100px; }
 .btn-success:hover { background: var(--success-hover); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { background: var(--danger-hover); }
+.btn-speak { background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 2px 4px; border-radius: 4px; transition: var(--transition); line-height: 1; }
+.btn-speak:hover { background: #edf2ff; }
+.btn-speak:active { background: #dbe4ff; transform: scale(0.9); }
 .btn-outline {
   background: transparent;
   border: 1.5px solid var(--border);
@@ -718,7 +721,7 @@ textarea { resize: vertical; min-height: 100px; }
         <div class="collapsible-body open" style="margin-bottom:12px">
           <table class="vocab-table" id="vocabTable">
             <thead>
-              <tr><th>单词/短语</th><th>音标</th><th>释义</th><th>词性</th><th></th></tr>
+              <tr><th>单词/短语</th><th>发音</th><th>音标</th><th>释义</th><th>词性</th><th></th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -1111,6 +1114,16 @@ function removeTag(index, event) {
   renderTags();
 }
 
+function speakWord(word, event) {
+  if (event) event.stopPropagation();
+  if (!word || !word.trim()) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(word.trim());
+  u.lang = 'en-US';
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -1230,6 +1243,7 @@ function addVocabRow(word = '', phonetic = '', meaning = '', pos = '') {
   const row = document.createElement('tr');
   row.innerHTML = `
     <td><input type="text" value="${escapeHtml(word)}" placeholder="单词"></td>
+    <td><button class="btn-speak" type="button" onclick="var w=this.parentElement.previousElementSibling.querySelector('input').value;if(w)speakWord(w,event)" title="朗读">🔊</button></td>
     <td><input type="text" value="${escapeHtml(phonetic)}" placeholder="音标"></td>
     <td><input type="text" value="${escapeHtml(meaning)}" placeholder="释义"></td>
     <td><input type="text" value="${escapeHtml(pos)}" placeholder="词性"></td>
@@ -1388,11 +1402,12 @@ function renderReviewCard() {
         </div>
         <div class="collapsible-body">
           <table class="vocab-table" style="margin-bottom:12px">
-            <thead><tr><th>单词/短语</th><th>音标</th><th>释义</th><th>词性</th></tr></thead>
+            <thead><tr><th>单词/短语</th><th>发音</th><th>音标</th><th>释义</th><th>词性</th></tr></thead>
             <tbody>
               ${card.vocabulary.map(v => `
                 <tr>
                   <td>${escapeHtml(v.word)}</td>
+                  <td><button class="btn-speak" onclick="var w=this.parentElement.previousElementSibling.textContent;if(w)speakWord(w,event)" title="朗读">🔊</button></td>
                   <td>${escapeHtml(v.phonetic || '')}</td>
                   <td>${escapeHtml(v.meaning || '')}</td>
                   <td>${escapeHtml(v.pos || '')}</td>
@@ -1597,7 +1612,7 @@ function showEditModal(cardId) {
 
     <label>📚 词汇分解</label>
     <table class="vocab-table" id="modalVocabTable">
-      <thead><tr><th>单词/短语</th><th>音标</th><th>释义</th><th>词性</th><th></th></tr></thead>
+      <thead><tr><th>单词/短语</th><th>发音</th><th>音标</th><th>释义</th><th>词性</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
     <button class="btn btn-outline btn-sm" onclick="addModalVocabRow()" style="margin-top:8px">+ 添加词汇</button>
@@ -1671,6 +1686,7 @@ function addModalVocabRow(word = '', phonetic = '', meaning = '', pos = '') {
   const row = document.createElement('tr');
   row.innerHTML = `
     <td><input type="text" value="${escapeHtml(word)}" placeholder="单词"></td>
+    <td><button class="btn-speak" type="button" onclick="var w=this.parentElement.previousElementSibling.querySelector('input').value;if(w)speakWord(w,event)" title="朗读">🔊</button></td>
     <td><input type="text" value="${escapeHtml(phonetic)}" placeholder="音标"></td>
     <td><input type="text" value="${escapeHtml(meaning)}" placeholder="释义"></td>
     <td><input type="text" value="${escapeHtml(pos)}" placeholder="词性"></td>
