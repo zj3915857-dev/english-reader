@@ -828,6 +828,8 @@ textarea { resize: vertical; min-height: 100px; }
 // ==================== DATA STORE ====================
 const STORAGE_KEY = 'english_reader_cards';
 const SETTINGS_KEY = 'english_reader_settings';
+const BACKUP_REMINDER_KEY = 'english_reader_last_backup_reminder';
+const BACKUP_REMINDER_DAYS = 7;
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
@@ -962,13 +964,18 @@ function getStageClass(card) {
 }
 
 // ==================== TOAST ====================
-function showToast(msg) {
+function showToast(msg, onClick) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = msg;
+  if (onClick) {
+    toast.style.cursor = 'pointer';
+    toast.style.pointerEvents = 'auto';
+    toast.addEventListener('click', onClick);
+  }
   container.appendChild(toast);
-  setTimeout(() => toast.remove(), 2500);
+  setTimeout(() => toast.remove(), onClick ? 8000 : 2500);
 }
 
 // ==================== TAB NAVIGATION ====================
@@ -1059,10 +1066,10 @@ async function testConnection() {
       resultEl.innerHTML = '<span style="color:var(--success)">✅ 连接成功！API 正常工作</span>';
     } else {
       const err = await resp.text();
-      resultEl.innerHTML = `<span style="color:var(--danger)">❌ 连接失败: ${resp.status} - ${err.substring(0, 100)}</span>`;
+      resultEl.innerHTML = `<span style="color:var(--danger)">❌ 连接失败: ${resp.status} - ${escapeHtml(err.substring(0, 100))}</span>`;
     }
   } catch (e) {
-    resultEl.innerHTML = `<span style="color:var(--danger)">❌ 网络错误: ${e.message}</span>`;
+    resultEl.innerHTML = `<span style="color:var(--danger)">❌ 网络错误: ${escapeHtml(e.message)}</span>`;
   }
 }
 
@@ -1868,6 +1875,23 @@ function init() {
   loadSettings();
   updateReviewBadge();
   renderReview();
+  checkBackupReminder();
+}
+
+function checkBackupReminder() {
+  const lastReminder = localStorage.getItem(BACKUP_REMINDER_KEY);
+  const now = Date.now();
+  if (!lastReminder || (now - parseInt(lastReminder)) > BACKUP_REMINDER_DAYS * 86400000) {
+    const cards = getCards();
+    if (cards.length > 0) {
+      setTimeout(() => {
+        showToast('?? ???7?????? ? ????????', () => {
+          exportData();
+        });
+      }, 1000);
+    }
+    localStorage.setItem(BACKUP_REMINDER_KEY, now.toString());
+  }
 }
 
 // Run on load
