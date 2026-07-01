@@ -709,8 +709,13 @@ textarea { resize: vertical; min-height: 100px; }
       <div class="card" id="analysisResult" style="display:none">
         <div class="card-title">📊 AI 分析结果 <span style="font-weight:400;font-size:0.8rem;color:var(--text-secondary)">（点击各项可编辑）</span></div>
 
-        <label>📝 中文翻译</label>
-        <textarea id="editTranslation" rows="4"></textarea>
+        <div class="collapsible-header" onclick="toggleCollapsible(this)">
+          <span class="arrow">▶</span>
+          <span>📝 中文翻译  (点击展开)</span>
+        </div>
+        <div class="collapsible-body" style="margin-bottom:12px">
+          <textarea id="editTranslation" rows="4" style="margin-top:8px"></textarea>
+        </div>
 
         <label>🔍 语法分析</label>
         <textarea id="editGrammar" rows="16" style="min-height:300px;resize:vertical"></textarea>
