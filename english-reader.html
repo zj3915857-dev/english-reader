@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   English Reader (英語閱讀錯題本)
   Copyright (C) 2026 zj3915857-dev
   Licensed under GNU GPL v3.0 — see LICENSE file for full terms.
@@ -702,6 +702,9 @@ textarea { resize: vertical; min-height: 100px; }
           <button class="btn btn-primary" onclick="doAIAnalysis()" id="btnAnalyze">
             🤖 AI 分析
           </button>
+          <button class="btn btn-outline" onclick="readFullText()" id="btnReadFull" style="margin-left: 8px;">
+            🔊 朗读全文
+          </button>
         </div>
       </div>
 
@@ -1134,6 +1137,16 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+function readFullText() {
+  const text = document.getElementById('addOriginal').value.trim();
+  if (!text) { showToast('⚠️ 请先输入英文原文'); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.85;
+  window.speechSynthesis.speak(u);
 }
 
 async function doAIAnalysis() {
